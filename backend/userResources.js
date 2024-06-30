@@ -32,20 +32,25 @@ router.put("/update",authMiddleware,async function(req,res){
 
 
 router.get("/otherUsers",authMiddleware,async function(req,res){
-    const firstname=req.query.firstname;
-    const secondname=req.query.secondname;
+    const name=req.query.name;
+    
+   
+    const regexFirstname = new RegExp(name,"i");  //.toString() not works
+    
 
-    const regexFirstname = new RegExp(firstname).toString(); 
-    const regexSecondname = new RegExp(secondname).toString();
-
+    
+    if(name){
     const usersArray=await User.find({       //returns array of objects satisfying search query 
-        $or:[{firstName:{ regexFirstname} },
-        {secondName:{ regexSecondname}}]
+        $or:[{firstName: regexFirstname },
+        {secondName: regexFirstname}]
     })
 
     res.status(200).json({
         message:usersArray
     });
+    }else{
+        res.status(200).send("");
+    }
 
 
 })
