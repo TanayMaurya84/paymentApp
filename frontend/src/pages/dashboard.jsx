@@ -12,8 +12,12 @@ import axios from "axios"
 export const Dashboard=()=>{
 
     const navigate=useNavigate();
+
     const [logged,setLogged]=useState('on')
     const [balance,setBalance]=useState(0)
+    const [name,setName]=useState();
+    const [userArray,setUserArray]=useState([])
+
     useEffect(()=>{
         if(localStorage.getItem('token')==null ){
             navigate("/signin")
@@ -29,17 +33,26 @@ export const Dashboard=()=>{
 
         })
         console.log(response.data.Balance)
-         
+       
         setBalance(response.data.Balance);
 
         }
         const bal=fetchData();
-
-        
-
-        
-
     },[])
+
+    useEffect(()=>{
+        async function getUsers(){
+            const response=await axios.get("http://localhost:3000/api/v1/userResources/otherUsers?name="+name,{
+                headers:{
+                    authorization:'Bearer '+localStorage.getItem('token')
+                }
+            });
+            setUserArray(response.data.message);
+            console.log(userArray)
+
+        }
+        getUsers()
+    },[name])
 
     
     const firstname=localStorage.getItem('firstName')
@@ -70,11 +83,25 @@ export const Dashboard=()=>{
             </div>
 
             <div className="flex flex-col justify-center w-full h-10 py-7 px-4  items-center ">
-                <input className="w-full h-15 type-text rounded-sm p-3 border-2 border-slate-200" placeholder="Search Users..." />
+                <input onChange={async (e)=>{
+                    setName(e.target.value);
+                }} className="w-full h-15 type-text rounded-sm p-3 border-2 border-slate-200" placeholder="Search Users..." />
             </div>
-            <User />
-            <User />
-            <User />
+
+            {   
+            (userArray) ?
+            userArray.map((user)=>{
+                const firstname=user.firstName;
+                const secondname=user.secondName;
+                const userID=user._id;
+
+                return(
+                    <User userID={userID} firstname={firstname} secondname={secondname} />
+                )
+            }
+            ) : null
+        }
+            
 
 
 

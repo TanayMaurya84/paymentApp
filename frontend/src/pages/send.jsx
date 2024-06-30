@@ -1,8 +1,13 @@
 import React from "react"
-import {useNavigate,Link} from "react-router-dom"
+import {useNavigate,Link,useLocation} from "react-router-dom"
 
 export const SendMoney=()=>{
     const navigate=useNavigate()
+    const location=useLocation()
+    //const userID=location.state.userID;
+    //const firstname=location.state.firstname;
+    console.log(location.state);
+    //console.log(firstname);
 
     return(
         <div className="h-screen flex justify-center bg-gray-300">
