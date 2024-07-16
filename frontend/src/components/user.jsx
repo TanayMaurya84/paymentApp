@@ -13,11 +13,10 @@ export const User=({userID,firstname,secondname})=>{
             <p className="font-bold text-lg pl-3"> {firstname} {secondname} </p>
             </div>
             <div >
-            <Link to={
-                {pathname:"/send",
-                state:{userID:userID,firstname:firstname,secondname:secondname}
-                }
-            }><button  className=" p-3 w-40 h-full rounded-md bg-gray-900 hover:bg-gray-700 text-white  font-semibold text-base "> Send Money </button></Link>
+            <button onClick={(e)=>{
+                navigate("/send?userID="+userID+"&firstname="+firstname+"&secondname="+secondname)
+            }
+            } className=" p-3 w-40 h-full rounded-md bg-gray-900 hover:bg-gray-700 text-white  font-semibold text-base "> Send Money </button>
             </div>
         </div>
     )

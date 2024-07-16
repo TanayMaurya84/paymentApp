@@ -1,12 +1,19 @@
-import React from "react"
-import {useNavigate,Link,useLocation} from "react-router-dom"
+import React,{useState} from "react"
+import axios from 'axios'
+import {useNavigate,useSearchParams,Link,useLocation} from "react-router-dom"
 
 export const SendMoney=()=>{
+    //const {userID,firstname,secondname}=props.match.params;
     const navigate=useNavigate()
-    const location=useLocation()
+    const [searchParams] = useSearchParams();
+    const userID= searchParams.get('userID');
+    const firstname= searchParams.get('firstname')
+    const secondname=searchParams.get('secondname')
+    const [amount,setAmount]=useState(0);
+    //const location=useLocation()
     //const userID=location.state.userID;
     //const firstname=location.state.firstname;
-    console.log(location.state);
+    //console.log(location.state);
     //console.log(firstname);
 
     return(
@@ -32,17 +39,32 @@ export const SendMoney=()=>{
                     </div>
 
                     <div >
-                        <p className="font-bold text-xl pl-2"> Friend's Name </p>
+                        <p className="font-bold text-xl pl-2"> {firstname} {secondname} </p>
                     </div>
                 </div>
 
                 <div className="py-2 justify-center">
                     <label className="font-semibold text-base" > Amount (in $) </label>
-                    <input type="number" className="w-full h-30   border-3 outline-3 outline-gray-600  rounded-sm p-2" placeholder="Enter amount" />
+                    <input onChange={(e)=>{
+                        const amt=e.target.value;
+                        setAmount(amt);
+                    }} type="number" className="w-full h-30   border-3 outline-3 outline-gray-600  rounded-sm p-2" placeholder="Enter amount" />
                 </div>
 
                 <div className="py-2">
-                    <button className="w-full h-30 bg-green-400 hover:bg-green-700 text-center text-white font-bold font-sm py-4 rounded-md"> Initiate Transfer </button>
+                    <button onClick={
+                        (e)=>{
+                            axios.post("http://localhost:3000/api/v1/account/transfer",{
+                                to:userID,
+                                amount:amount
+                            },{headers:{
+                                authorization:'Bearer '+localStorage.getItem('token'),
+                                userID:localStorage.getItem('userID') 
+                            }})
+                            
+
+                        }
+                    } className="w-full h-30 bg-green-400 hover:bg-green-700 text-center text-white font-bold font-sm py-4 rounded-md"> Initiate Transfer </button>
                 </div>
 
             </div>

@@ -43,10 +43,11 @@ router.post("/transfer",authMiddleware,async function(req,res){
     
         
         const fromAccount=await Account.findOne({
-            userID:req.session.userID
+            userID:req.headers.userID
         }).session(Session);
 
         if(!fromAccount || fromAccount.balance<amount){
+            await Session.abortTransaction();
             return res.status(400).json({
                 message:"Insufficient balance!"
             })
@@ -64,7 +65,7 @@ router.post("/transfer",authMiddleware,async function(req,res){
         }
         console.log(5);
         await Account.updateOne(
-            {userID:req.userId},
+            {userID:req.headers.userID},
             {$inc:{
                 balance:-amount
             }}
@@ -72,7 +73,7 @@ router.post("/transfer",authMiddleware,async function(req,res){
         ).session(Session);
 
         await Account.updateOne({
-            userID:req.userId},
+            userID:to},
             {$inc:{
                 balance:amount
             }
